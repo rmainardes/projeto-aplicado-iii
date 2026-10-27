@@ -1,6 +1,6 @@
 HTTP 200
 {
-  "atualizadoEm": "2026-10-25T21:50:40.430143909Z",
+  "atualizadoEm": "2026-10-27T20:49:39.021679230Z",
   "erros": [
     {
       "coluna": "Leitura2",
@@ -22,6 +22,6 @@ HTTP 200
     }
   ],
   "estado": "REJEITADA",
-  "id": "248677fa-71a8-41e3-9314-298f789b4117",
+  "id": "e65158c1-99c8-4149-8077-e5fdea32e8b6",
   "sha256": "d8d3882b98a29406cf9ab3de91ff9e64d7852bdb100b33b793b8f8c8f453837e"
 }

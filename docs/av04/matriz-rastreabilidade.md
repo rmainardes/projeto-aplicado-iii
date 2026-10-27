@@ -37,9 +37,9 @@ Legenda da situação: **Atendido** · **Parcial** (com o que falta) · **Fora d
 | RF-13 | Emissão com hash e token de verificação | E12 | `FnCertificado` (`sha256Pdf`, `TOKEN#` com `SecureRandom`) | `FnCertificadoTest`; CT-403 | `respostas/cenario1-4-verificacao.txt` | Parcial: sem numeração sequencial (RN-14) e sem Object Lock |
 | RF-14 | Trilha de auditoria | Tabela `auditoria` (§3.2.2) | Estados com instante e `sub` no item; logs só com id, SHA-256, tamanho e resultado | `FnIngestaoTest` (log); CT-409 | `respostas/log-fn-ingestao.txt` | Parcial: tabela `auditoria` somente de inserção (T19) no roadmap |
 | RF-15 | Consulta de calibrações e download do certificado | Passo 10 | `GET /calibracoes`, `GET /calibracoes/{id}`, `GET /calibracoes/{id}/pdf`; `Historico.jsx` | `FnApiTest`; CT-402, CT-411 | `respostas/t12-historico.txt`, `tela/t12-2-lista.jpg` | Atendido (só os 20 mais recentes do usuário) |
-| RF-16 | Verificação pública de autenticidade | Passo 10, D-015 | `GET /verificacao/{token}` (sem login), QR no PDF, `Verificacao.jsx` (conferência do hash do PDF no navegador) | `FnApiTest`; CT-403, CT-412 | `respostas/cenario1-4-verificacao.txt`; print do celular (vídeo) | Atendido |
+| RF-16 | Verificação pública de autenticidade | Passo 10, D-015 | `GET /verificacao/{token}` (sem login), QR no PDF, `Verificacao.jsx` (conferência do hash do PDF no navegador) | `FnApiTest`; CT-403, CT-412 | `respostas/cenario1-4-verificacao.txt`; `tela/ct-412-qr-celular-4g.png` | Atendido |
 | RF-19 | Exportação para o LightLab | — | — | — | — | Fora do escopo (DE-01) |
-| RF-20 | Painel operacional | GSI2 | Indicadores do histórico (envios, emitidos, `APROVADO`, `REPROVADO`, rejeitadas, em andamento) | CT-411 | print do histórico (vídeo) | Parcial: indicadores sobre os envios do usuário, sem visão global por estado |
+| RF-20 | Painel operacional | GSI2 | Indicadores do histórico (envios, emitidos, `APROVADO`, `REPROVADO`, rejeitadas, em andamento) | CT-411 | `tela/ct-411-1-historico-indicadores.png` | Parcial: indicadores sobre os envios do usuário, sem visão global por estado |
 | RF-22 | Histórico de tendência por instrumento | GSI1 | — | — | — | Fora do recorte: sem cadastro de instrumento na planilha da AV03 |
 
 ## 3. Requisitos não funcionais (RNF)

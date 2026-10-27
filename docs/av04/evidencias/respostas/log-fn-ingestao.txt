@@ -1,16 +1,20 @@
+INIT_START Runtime Version: java:21.mainline.v125	Runtime Version ARN: arn:aws:lambda:us-east-2::runtime:4abff14dad690da2334d1dab30402152c7b77d6e3d0a3df9071bc7b46f965355
 SLF4J(W): No SLF4J providers were found.
 SLF4J(W): Defaulting to no-operation (NOP) logger implementation
 SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
-Oct 25, 2026 9:50:23 PM br.senai_pa3.ingestao.FnIngestao registrar
-INFO: Ingestão: uploadId=6e3a51ee-fbe6-4c00-bfb3-1450a212f0a3 sha256=ac42c2df144fb14e05262e7b8d54460157dc45fb21117f0ae273766eeb6fc7e8 bytes=6,276 resultado=PROCESSADA
-Oct 25, 2026 9:50:35 PM br.senai_pa3.ingestao.FnIngestao registrar
-INFO: Ingestão: uploadId=1ca9efc6-da17-44bd-8144-82123d0536b3 sha256=ac42c2df144fb14e05262e7b8d54460157dc45fb21117f0ae273766eeb6fc7e8 bytes=6,276 resultado=DUPLICADA
-Oct 25, 2026 9:50:40 PM br.senai_pa3.ingestao.FnIngestao registrar
-INFO: Ingestão: uploadId=248677fa-71a8-41e3-9314-298f789b4117 sha256=d8d3882b98a29406cf9ab3de91ff9e64d7852bdb100b33b793b8f8c8f453837e bytes=6,234 resultado=REJEITADA
-Oct 25, 2026 9:50:47 PM br.senai_pa3.ingestao.FnIngestao registrar
-INFO: Ingestão: uploadId=f6d0b4ff-5f66-4362-a74d-3f86a3181c4b sha256=b596ab8b6d00002e6e784ddc7935726299c0071cd09276b737c3cc2e5569c6aa bytes=6,238 resultado=PROCESSADA
-Oct 25, 2026 9:50:47 PM br.senai_pa3.ingestao.FnIngestao registrar
-INFO: Ingestão: uploadId=c8fc163a-58dc-46c2-93cc-06f91691ac9e sha256=b596ab8b6d00002e6e784ddc7935726299c0071cd09276b737c3cc2e5569c6aa bytes=6,238 resultado=DUPLICADA
+2026-10-27T20:49:18.111730132Z main ERROR Log4j API could not find a logging provider.
+Oct 27, 2026 8:49:21 PM br.senai_pa3.ingestao.FnIngestao registrar
+INFO: Ingestão: uploadId=656f3989-5b90-4f0b-a17f-6e38d7d6428e sha256=ac42c2df144fb14e05262e7b8d54460157dc45fb21117f0ae273766eeb6fc7e8 bytes=6,276 resultado=PROCESSADA
+Oct 27, 2026 8:49:33 PM br.senai_pa3.ingestao.FnIngestao registrar
+INFO: Ingestão: uploadId=d0448037-c0e9-4a13-95e0-f5b6a48af955 sha256=ac42c2df144fb14e05262e7b8d54460157dc45fb21117f0ae273766eeb6fc7e8 bytes=6,276 resultado=DUPLICADA
+Oct 27, 2026 8:49:39 PM br.senai_pa3.ingestao.FnIngestao registrar
+INFO: Ingestão: uploadId=e65158c1-99c8-4149-8077-e5fdea32e8b6 sha256=d8d3882b98a29406cf9ab3de91ff9e64d7852bdb100b33b793b8f8c8f453837e bytes=6,234 resultado=REJEITADA
+Oct 27, 2026 8:49:45 PM br.senai_pa3.ingestao.FnIngestao registrar
+INFO: Ingestão: uploadId=9e0700df-0910-4c42-9b1f-158b6ffaeec9 sha256=b596ab8b6d00002e6e784ddc7935726299c0071cd09276b737c3cc2e5569c6aa bytes=6,238 resultado=PROCESSADA
+INIT_START Runtime Version: java:21.mainline.v125	Runtime Version ARN: arn:aws:lambda:us-east-2::runtime:4abff14dad690da2334d1dab30402152c7b77d6e3d0a3df9071bc7b46f965355
 SLF4J(W): No SLF4J providers were found.
 SLF4J(W): Defaulting to no-operation (NOP) logger implementation
 SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+2026-10-27T20:49:47.703907421Z main ERROR Log4j API could not find a logging provider.
+Oct 27, 2026 8:49:49 PM br.senai_pa3.ingestao.FnIngestao registrar
+INFO: Ingestão: uploadId=bd105388-59fe-48c4-8121-e444808b8e93 sha256=b596ab8b6d00002e6e784ddc7935726299c0071cd09276b737c3cc2e5569c6aa bytes=6,238 resultado=DUPLICADA
