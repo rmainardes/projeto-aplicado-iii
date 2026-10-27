@@ -6,9 +6,9 @@ da versão que introduz a D-027 (27/10/2026). Registre aqui o commit e a data do
 
 | Item | Valor |
 | --- | --- |
-| Commit implantado | `<preencher: git rev-parse --short HEAD>` |
-| Data do deploy (`infra/deploy.sh` + `infra/deploy-web.sh`) | `<preencher>` |
-| URL da plataforma (saída `UrlPlataforma`) | `<preencher>` |
+| Commit implantado | `219631f` |
+| Data do deploy (`infra/deploy.sh` + `infra/deploy-web.sh`) | 27/10/2026 |
+| URL da plataforma (saída `UrlPlataforma`) | https://n0jdkil21h.execute-api.us-east-2.amazonaws.com/ |
 
 🔒 Nenhuma evidência traz JWT, URL pré-assinada, token de verificação real, número da conta, e-mail
 pessoal ou dado real da Schulz. As respostas gravadas pelos scripts passam por `jq`/`sed` antes de irem ao
@@ -38,11 +38,11 @@ mantida fora do Git; a mesma verificação roda com `inv-R03-strict.xlsx`.
 | CT-407 | Id inexistente; arquivo acima de 5 MB | `infra/smoke.sh` | 404; 413 | `respostas/cenario5-*.txt` | ✅ 25/10 |
 | CT-408 | Dois envios simultâneos do mesmo hash | `infra/smoke.sh` | um `EMITIDA` e um `DUPLICADA` | `respostas/cenario6-simultaneos.txt` | ✅ 25/10 |
 | CT-409 | Logs sem dado pessoal | CloudWatch, grupo `/aws/lambda/pa3-av04-fn-ingestao` | só `uploadId`, SHA-256, bytes, resultado | `respostas/log-fn-ingestao.txt` | ✅ 25/10 |
-| CT-410 | Interface servida pela `fn-web` em HTTPS | `infra/smoke-web.sh` | `/` e `/verificar/<token>` → 200 HTML; asset inexistente → 404; HTTP simples recusado | `respostas/web-interface.txt` | ⏳ após o deploy da D-027 |
+| CT-410 | Interface servida pela `fn-web` em HTTPS | `infra/smoke-web.sh` | `/` e `/verificar/<token>` → 200 HTML; asset inexistente → 404; HTTP simples recusado | `respostas/web-interface.txt` | ✅ 27/10 |
 | CT-411 | Histórico e indicadores de gestão | Tela, aba **Histórico** | lista do mais recente ao mais antigo; indicadores batem com a lista | `respostas/t12-historico.txt`, `tela/t12-*.jpg` | ✅ 25/10 (lista); ⏳ indicadores na nuvem |
 | CT-412 | QR Code do PDF aberto no celular por 4G | Ler o QR do certificado emitido | página `/verificar/<token>` com parecer e hash; conferência do PDF → "Arquivo íntegro" | print do celular / vídeo | ⏳ após o deploy da D-027 |
 | CT-413 | Tablet (768 px) e celular (375 px) | DevTools | sem rolagem lateral; alvos de 44 px | `tela/t11-7-tablet-768.jpg`, `tela/t12-5-lista-736px.jpg` | ✅ 25/10 (tablet); ✅ 27/10 (verificação a 375 px, local) |
-| CT-414 | Cabeçalhos de segurança da interface | `infra/smoke-web.sh` | CSP, HSTS, `nosniff`, `no-referrer`, `DENY` | `respostas/web-interface.txt` | ✅ 27/10 (local); ⏳ na nuvem |
+| CT-414 | Cabeçalhos de segurança da interface | `infra/smoke-web.sh` | CSP, HSTS, `nosniff`, `no-referrer`, `DENY` | `respostas/web-interface.txt` | ✅ 27/10 |
 | CT-415 | Custo dentro do plano gratuito | Console: *Billing → Free Tier*, *Cost Explorer* | US$ 0,00 faturado; só consumo de créditos | print em `tela/` | ⏳ |
 | CT-416 | Ciclo de vida de 5 anos (DE-04) | `aws s3api get-bucket-lifecycle-configuration` | `GLACIER_IR` aos 365 d; expiração aos 1 825 d | relatório §6 (T08) | ✅ 25/10 |
 | CT-417 | URL pré-assinada expirada | Repetir o `PUT` 6 min depois do `POST /uploads` | 403 do S3 (`Request has expired`) | — | ⏳ opcional |
