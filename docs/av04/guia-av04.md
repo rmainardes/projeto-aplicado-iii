@@ -486,7 +486,7 @@ encontrado" (sem distinguir de token malformado).
 
 **Aceite.** Ler o QR do PDF (ou abrir a URL impressa) com o celular abre a página certa.
 
-> **Concluída em 27/10 (código).** `web/src/Verificacao.jsx`: `/verificar/<token>` sem login (identificador, data, parecer, SHA-256 do PDF), token malformado = inexistente, `/verificar` sem token pede o código, e conferência do PDF recebido pelo SHA-256 calculado no aparelho (Web Crypto), porque um PDF não pode conter o próprio hash: a instrução do guia ("compare com o hash impresso") foi trocada por essa conferência. Testada a 375 e 390 px com a `fn-web` real servindo `web/dist` e a resposta da CT-403 simulada (`evidencias/tela/t13-verificacao-local-390px.jpg`). **Falta:** ler o QR no celular por 4G depois do deploy (CT-412).
+> **Concluída em 27/10 (código).** `web/src/Verificacao.jsx`: `/verificar/<token>` sem login (identificador, data, parecer, SHA-256 do PDF), token malformado = inexistente, `/verificar` sem token pede o código, e conferência do PDF recebido pelo SHA-256 calculado no aparelho (Web Crypto), porque um PDF não pode conter o próprio hash: a instrução do guia ("compare com o hash impresso") foi trocada por essa conferência. Testada a 375 e 390 px com a `fn-web` real servindo `web/dist` e a resposta da CT-403 simulada (`evidencias/tela/t13-verificacao-local-390px.jpg`). **Fechada em 27/10:** QR lido num celular por dados móveis (5G, sem Wi-Fi), hash igual ao registrado e "Arquivo íntegro" (CT-412, `evidencias/tela/ct-412-qr-celular-4g.png`).
 
 **Relatório.** §5.
 
@@ -502,7 +502,7 @@ API e do bucket `entrada` para a origem do CloudFront.
 
 **Aceite.** Fluxo completo pela URL do CloudFront, em aba anônima, e a verificação no celular por
 
-> **Código pronto em 27/10; deploy pendente.** CloudFront substituído pela `fn-web` no próprio HTTP API (D-027): `infra/fn-web/index.mjs` (8 testes `node:test`), rotas `GET /` e `GET /{proxy+}` sem autorizador, CORS dos buckets com a origem da API, `fn-api` com buckets pelo nome (evita ciclo; verificado), `UrlVerificacaoBase=api`. `infra/deploy-web.sh` (env → build → sync, `index.html` por último → confere 200) e `infra/smoke-web.sh` (CT-410, CT-414). **Falta:** rodar `infra/deploy.sh`, `infra/deploy-web.sh` e `infra/smoke-web.sh` com o perfil `pa3`.
+> **Implantada em 27/10.** CloudFront substituído pela `fn-web` no próprio HTTP API (D-027): `infra/fn-web/index.mjs` (8 testes `node:test`), rotas `GET /` e `GET /{proxy+}` sem autorizador, CORS dos buckets com a origem da API, `fn-api` com buckets pelo nome (evita ciclo; verificado), `UrlVerificacaoBase=api`. `infra/deploy-web.sh` (env → build → sync, `index.html` por último → confere 200) e `infra/smoke-web.sh` (CT-410, CT-414). **Deploy em 27/10** (commit `219631f`, perfil `pa3`): changeset sem substituição de recurso com estado; dois defeitos só visíveis na nuvem, corrigidos: o `handler` recebia o *callback* do runtime no lugar do leitor do S3 (todo `GET` dava 500; agora `tratar(evento, ler)` + `handler(evento)`, 9 testes) e faltava `s3:ListBucket` no papel da `fn-web` (asset inexistente dava 500 em vez de 404). `infra/smoke-web.sh` sem falhas (CT-410, CT-414); `infra/smoke.sh` repetido, todos os cenários passam. Base da etapa: commit `66b4d42` de Nícolas Lange.
 4G (fora da rede de casa).
 
 **Relatório.** §6.
@@ -570,7 +570,7 @@ atualizado, divergências da AV02) · 4 Persistência e idempotência · 5 Plata
 
 **Aceite.** PDF aberto e lido por você; links clicáveis; nenhum dado pessoal de terceiros.
 
-> **Gerado em 27/10.** `ferramentas/relatorio/gerar-relatorio.mjs` (Markdown → HTML → PDF pelo Chrome/Edge headless, sem pandoc). **Falta:** preencher RA, URL da plataforma e link do vídeo no cabeçalho de `AV4_fonte.md` e gerar de novo.
+> **Gerado em 27/10.** `ferramentas/relatorio/gerar-relatorio.mjs` (Markdown → HTML → PDF pelo Chrome/Edge headless, sem pandoc). URL da plataforma preenchida e PDF regenerado em 27/10 com o deploy, os defeitos corrigidos e as Figuras 7 a 9. **Falta:** RA dos três integrantes e link do vídeo no cabeçalho de `AV4_fonte.md`, e gerar de novo.
 
 ---
 
@@ -610,10 +610,10 @@ sem `UpdateItem`/`DeleteItem` nela.
 | T10    | 🛠/🧑‍🏫 | Concluída | `web/` com login no Cognito real (ID token em memória); `cognito.js` do Rodrigo; testado no Chrome |
 | T11    | 🛠   | Concluída | Upload → S3 → polling; 4 estados provados na nuvem; HALF_EVEN igual ao PDF; 768 px sem rolagem |
 | T12    | 🛠   | Concluída | GSI2 + `GET /calibracoes` + aba Histórico; 154 testes; 9 envios (T09 + T11) com o mesmo usuário |
-| T13    | 🛠   | Concluída | Verificação pública + conferência do PDF no aparelho; falta QR no celular (CT-412) |
-| T14    | 🛠   | Código pronto | `fn-web` no HTTP API (D-027); deploy pendente |
-| T15    | 🛠   | Concluída | Evidências CT-401–418 e matriz; 154 testes |
+| T13    | 🛠   | Concluída | Verificação pública + conferência do PDF no aparelho; QR lido no celular (CT-412) |
+| T14    | 🛠   | Concluída | `fn-web` no HTTP API (D-027), implantada em 27/10; CT-410 e CT-414 passam |
+| T15    | 🛠   | Concluída | Evidências CT-401–418 e matriz; CT-410 a CT-415 fechados em 27/10 (CT-417 opcional) |
 | T16    | 🧑‍🏫   | Roteiro pronto | Falta gravar |
-| T17    | 🧑‍🏫   | PDF gerado | Falta RA, URL e link do vídeo |
+| T17    | 🧑‍🏫   | PDF gerado | Falta RA e link do vídeo |
 | T18    | 🛠   | Pendente |            |
 | T19    | 🛠   | Pendente |            |

@@ -13,7 +13,7 @@
 | **Grupo 39** | Adrian David Castillo Marcano — RA `<preencher>`; Nícolas Kretzschmar Lange — RA `<preencher>`; Rodrigo Mainardes Ribeiro — RA `<preencher>` |
 | **Entrega** | AV04 — Plataforma Web de Gestão e deploy na AWS (Camada Gratuita) |
 | **Repositório GitHub** | <https://github.com/NicolasKLange/projeto-aplicado-iii> |
-| **Plataforma em nuvem** | `<preencher: saída UrlPlataforma do stack>` |
+| **Plataforma em nuvem** | <https://n0jdkil21h.execute-api.us-east-2.amazonaws.com/> (stack `pa3-av04`, `us-east-2`) |
 | **Vídeo (YouTube)** | `<preencher: link do vídeo não listado>` |
 
 ## 1. Introdução e vínculo com AV01–AV03
@@ -207,6 +207,24 @@ não enviado. Ao fim, confere que a raiz responde 200. O `infra/smoke-web.sh` te
 (rotas da SPA, 404, 401 da API sem token, HTTP simples recusado, cache e cabeçalhos de segurança) e grava
 `docs/av04/evidencias/respostas/web-interface.txt`.
 
+**Deploy da interface e defeitos encontrados (27/10/2026).** A base desta etapa (`fn-web`, página pública de
+verificação com conferência do SHA-256, indicadores do histórico, scripts de deploy e de smoke, matriz e
+roteiro do vídeo) foi escrita por Nícolas Lange (commit `66b4d42`); o deploy no stack `pa3-av04`, a
+validação na nuvem e as correções abaixo foram feitos por Rodrigo Mainardes (commit `219631f`). O
+`infra/deploy.sh` produziu um changeset sem substituição de recurso com estado (tabela, buckets e user
+pool), e a `fn-web` passou de Java para Node.js 22. Dois defeitos só apareceram na nuvem, e os testes
+unitários não os pegavam:
+
+1. **Todo `GET` respondia 500.** O `handler` tinha um terceiro parâmetro com valor padrão (`ler =
+   lerDoBucket`), usado para injetar um leitor falso nos testes. O runtime `nodejs22.x` passa o callback
+   como terceiro argumento, que ocupava o lugar do leitor do S3; a chamada `ler('index.html')` virava um
+   erro de invocação. A lógica passou para `tratar(evento, ler)` e o `handler` exportado recebe só
+   `(evento)`, com um teste de regressão sobre a aridade.
+2. **Asset inexistente respondia 500, não 404.** Sem `s3:ListBucket`, o S3 devolve 403 (e não
+   `NoSuchKey`) para chave que não existe, e a `fn-web` tratava o 403 como falha. O papel da função ganhou
+   `s3:ListBucket` apenas no bucket `web`. O `infra/smoke-web.sh` acusou a falha e passou sem ela depois da
+   correção.
+
 ### Roteiro de deploy do zero (reprodutível)
 
 Pré-requisitos: conta AWS no plano gratuito, AWS CLI v2, AWS SAM CLI, JDK 21, Node.js 22 ou 24 e Git Bash
@@ -219,7 +237,7 @@ são `pa3`, `us-east-2` e `pa3-av04`.
    (`aws configure --profile pa3`, região `us-east-2`, saída `json`). Conferir com
    `aws sts get-caller-identity --profile pa3`.
 3. **Clonar e testar:** `git clone https://github.com/NicolasKLange/projeto-aplicado-iii.git`, depois
-   `./mvnw test` (154 testes, 1 pulado) e `node --test infra/fn-web/index.test.mjs` (8 testes).
+   `./mvnw test` (154 testes, 1 pulado) e `node --test infra/fn-web/index.test.mjs` (9 testes).
 4. **Back-end:** `infra/deploy.sh`. O script gera o JAR sombreado, roda `sam validate --lint` e
    `sam deploy`; revise a lista do *changeset* e confirme (sem terminal interativo,
    `CONFIRMAR_CHANGESET=nao`). Resultado: stack em `CREATE_COMPLETE` ou `UPDATE_COMPLETE`.
@@ -273,6 +291,18 @@ cobrança por hora ligada.
 | Amazon S3 (4 buckets: entrada, certificados, web e o do SAM) | < 50 MB, alguns milhares de requisições | sem cota permanente em conta nova | Créditos (centavos) |
 | API Gateway HTTP API (API e interface, D-027) | alguns milhares de chamadas | sem cota permanente em conta nova | Créditos (centavos) |
 
+**Conferência em 27/10/2026 (CT-415), depois do deploy e dos testes na nuvem.** O painel do plano gratuito
+mostra "Sua conta do plano gratuito não é cobrada", saldo de US$ 140,00 em créditos e 180 dias restantes; a
+página *Free Tier* lista 0 ofertas em uso, o que é coerente com um plano em que o consumo sai do saldo de
+créditos, e não de limites por serviço. O Explorador de Custos de 25 a 27/10 mostra custo total e custo
+diário médio de US$ 0,00 (Figura 9). O saldo era de US$ 100,00 em 25/10; a diferença não foi investigada.
+Os dados de 25 a 27/10 trazem asterisco no gráfico (ainda em processamento), e o consumo do dia pode não
+estar incluído.
+
+![Explorador de Custos](evidencias/tela/ct-415-cost-explorer.png)
+
+*Figura 9 — Explorador de Custos de 25 a 27/10/2026: custo total de US$ 0,00 (CT-415). Prints recortados, sem número de conta.*
+
 A D-027 acrescenta à conta de créditos as requisições da interface: cada abertura da página faz três
 chamadas (HTML, JS e CSS) e o navegador guarda os assets em cache por um ano. Mesmo com mil aberturas no
 mês, são cerca de 3 000 chamadas, frações de centavo de dólar na tarifa pública do HTTP API. O CloudFront
@@ -283,7 +313,7 @@ da D-016 deixou de ser criado e, com ele, o risco de uma distribuição fora do 
 O catálogo completo dos casos de teste (CT-401 a CT-418), com comando de reprodução e situação, está em
 `docs/av04/evidencias.md`. Testes automatizados em 27/10/2026, num clone limpo, sem credenciais nem
 configuração da AWS: `./mvnw test` com 154 testes, 0 falhas e 1 pulado (69 no `nucleo`, 15 no `app-local`
-e 70 nas `funcoes`), `node --test infra/fn-web/index.test.mjs` com 8 testes e `npm run build` sem erro.
+e 70 nas `funcoes`), `node --test infra/fn-web/index.test.mjs` com 9 testes (8 mais o de regressão do `handler`) e `npm run build` sem erro.
 Esse clone limpo revelou um defeito de portabilidade: o teste de ambiente da `fn-certificado` só passava
 em máquina com região AWS configurada, porque o construtor criava o cliente do SDK antes de conferir as
 variáveis de ambiente (Java avalia os argumentos da esquerda para a direita). As variáveis passaram a ser
@@ -306,6 +336,29 @@ com custo zero, está no vídeo narrado (link no cabeçalho), gravado segundo `d
 | CT-408 | Dois envios simultâneos do mesmo hash (`ok-aprovado.xlsx`) | exatamente um `EMITIDA` e um `DUPLICADA` (sentinela `HASH#` com condição no DynamoDB real) | igual |
 
 Log da `fn-ingestao` no CloudWatch (`log-fn-ingestao.txt`): cada execução registra apenas `uploadId`, SHA-256, tamanho em bytes e resultado; a busca por `.xlsx`, nome dos arquivos, `sub` e `eyJ` (início de JWT) não encontra nada. Não coberto na nuvem: reentrega do mesmo evento do S3, provada só nos testes unitários da `fn-ingestao`.
+
+**Revalidação com a interface publicada (27/10/2026, commit `219631f`).** O `infra/smoke.sh` foi repetido
+contra a versão implantada e passou em todos os cenários (CT-401 a CT-409); as respostas em
+`evidencias/respostas/` foram regeneradas. Os casos que dependem da interface:
+
+| ID | Cenário | Esperado | Obtido |
+| --- | --- | --- | --- |
+| CT-410 | `infra/smoke-web.sh`: `/` e `/verificar/<token>` em HTTPS, asset inexistente, API sem token, HTTP simples | 200 HTML; 404; 401; recusado | igual, depois da correção do `ListBucket` |
+| CT-411 | Aba **Histórico** depois de três envios (aprovado, reprovado, rejeitado) | lista do mais recente ao mais antigo; indicadores batem | 3 envios, 2 emitidos, 1 `APROVADO`, 1 `REPROVADO`, 1 rejeitada, 0 em andamento (Figura 7) |
+| CT-412 | QR Code do PDF lido num celular por dados móveis (5G), sem Wi-Fi | página `/verificar/<token>` com o parecer e o hash; conferência do PDF no aparelho | hash igual ao registrado: "Arquivo íntegro" (Figura 8) |
+| CT-414 | Cabeçalhos de segurança da interface | CSP, HSTS, `nosniff`, `no-referrer`, `DENY` | igual |
+| CT-415 | Custo no plano gratuito | US$ 0,00 faturado; só créditos | ver §8 e Figura 9 |
+
+Antes do teste no celular, os tokens impressos nos dois PDFs de teste foram conferidos pela rota pública sem
+login: ambos responderam 200 e o `sha256Pdf` registrado era idêntico ao SHA-256 de cada arquivo.
+
+![Histórico com indicadores](evidencias/tela/ct-411-1-historico-indicadores.png)
+
+*Figura 7 — Aba Histórico na nuvem: indicadores de gestão e a lista dos três envios (CT-411).*
+
+![Verificação pelo celular](evidencias/tela/ct-412-qr-celular-4g.png)
+
+*Figura 8 — Página de verificação aberta pelo QR Code num celular, por dados móveis, com a conferência do PDF (CT-412).*
 
 ## 10. Matriz de Rastreabilidade de Requisitos
 
@@ -338,7 +391,7 @@ centenas de milissegundos). Aceitável na PoC; em produção, CloudFront na fren
 
 - **[PREMISSA]** O PDF do roteiro da AV04 pula da seção 2 para a 5. Perguntas ao professor enviadas em 24/10/2026 (seções 3 e 4 trazem requisitos? Plataforma Web com página pública de verificação por QR Code; vídeo "não listado" no YouTube). Sem resposta até a data. Na AV03 o professor já havia enviado arquivo com numeração errada, confirmado por mensagem, sem conteúdo nas seções faltantes; seguimos assumindo que não há requisitos além dos presentes no documento.
 - **[RESOLVIDO 27/10]** CloudFront e OAC no plano gratuito: a questão deixou de existir. O plano exige WAF em `us-east-1`, negado pela SCP (D-026), e a interface passou a ser servida pela `fn-web` no próprio HTTP API (D-027).
-- **[PREMISSA]** Requisições do API Gateway e do S3 consomem créditos do plano gratuito, sem fatura, como já previa a AV02 §2.1.4. Confirmar no painel do plano gratuito depois do vídeo (CT-415).
+- **[PREMISSA]** Requisições do API Gateway e do S3 consomem créditos do plano gratuito, sem fatura, como já previa a AV02 §2.1.4. Verificado em 27/10 (CT-415, §8): plano não cobrado e US$ 0,00 no Explorador de Custos; reconferir antes da entrega, porque os dados do dia ainda estavam em processamento.
 - **[RESOLVIDO 25/10]** Região: a SCP do plano gratuito só libera `us-east-2`; a AV02 assumia `sa-east-1`. Decidido na D-022, com o efeito de LGPD tratado na §7.
 - **[RESOLVIDO 25/10]** MFA do login humano: ativo no AWS Builder ID, com dois dispositivos (WebAuthn e TOTP). Evidência: `docs/av04/evidencias/tela/mfa-tarjado.png` (e-mails e IP tarjados).
 - **[PREMISSA]** O usuário IAM `pa3-deploy` não tem MFA: não tem senha de console e só usa access key, guardada apenas no perfil local `pa3`. A chave é desativada depois da nota.
