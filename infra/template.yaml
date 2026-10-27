@@ -554,6 +554,12 @@ Resources:
                 Effect: Allow
                 Action: s3:GetObject
                 Resource: !Sub '${BucketWeb.Arn}/*'
+              # Sem ListBucket o S3 responde 403, não NoSuchKey, para chave inexistente: o asset que
+              # não existe viraria 500 em vez de 404, e a rota da SPA, 500 em vez do index.html.
+              - Sid: ChaveInexistente
+                Effect: Allow
+                Action: s3:ListBucket
+                Resource: !GetAtt BucketWeb.Arn
 
   FnWeb:
     Type: AWS::Serverless::Function

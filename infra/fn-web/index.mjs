@@ -87,7 +87,8 @@ function resposta(status, corpo, cabecalhos = {}) {
   };
 }
 
-export async function handler(evento, _contexto, ler = lerDoBucket) {
+/** Lógica da função; o leitor é injetável para o teste. */
+export async function tratar(evento, ler) {
   if (evento.requestContext?.http?.method !== 'GET') {
     return resposta(405, 'Método não permitido.');
   }
@@ -124,3 +125,7 @@ export async function handler(evento, _contexto, ler = lerDoBucket) {
     return resposta(500, 'Erro ao carregar a interface.');
   }
 }
+
+// Só (evento, contexto): o runtime nodejs passa o callback como terceiro argumento, e um parâmetro
+// extra com valor padrão receberia o callback no lugar do leitor do S3.
+export const handler = (evento) => tratar(evento, lerDoBucket);

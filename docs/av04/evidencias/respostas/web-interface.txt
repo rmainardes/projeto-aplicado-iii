@@ -1,0 +1,18 @@
+# CT-410 / CT-414 — interface servida pela fn-web (2026-10-27T20:43Z)
+## GET /
+HTTP/2 200 
+date: Tue, 27 Oct 2026 20:43:21 GMT
+content-type: text/html; charset=utf-8
+content-length: 389
+content-security-policy: default-src 'self'; connect-src 'self' https://*.amazonaws.com; img-src 'self' data: blob:; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'
+strict-transport-security: max-age=31536000
+x-content-type-options: nosniff
+referrer-policy: no-referrer
+x-frame-options: DENY
+cache-control: no-cache
+apigw-requestid: <omitido>
+
+## GET /verificar/<token>
+HTTP/2 200 
+## GET /calibracoes sem token
+HTTP/2 401 

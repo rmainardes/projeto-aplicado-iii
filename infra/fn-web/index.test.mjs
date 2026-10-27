@@ -1,7 +1,7 @@
 // Testes da fn-web sem AWS: node --test infra/fn-web/
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { chaveDe, handler } from './index.mjs';
+import { chaveDe, handler, tratar } from './index.mjs';
 
 const ARQUIVOS = {
   'index.html': Buffer.from('<!doctype html><title>SPA</title>'),
@@ -23,7 +23,7 @@ test('caminho com .. ou barra dupla é recusado', () => {
 });
 
 test('serve o index.html com no-cache e cabeçalhos de segurança', async () => {
-  const r = await handler(get('/verificar/qualquer'), {}, lerFalso);
+  const r = await tratar(get('/verificar/qualquer'), lerFalso);
   assert.equal(r.statusCode, 200);
   assert.equal(r.headers['Content-Type'], 'text/html; charset=utf-8');
   assert.equal(r.headers['Cache-Control'], 'no-cache');
@@ -34,39 +34,43 @@ test('serve o index.html com no-cache e cabeçalhos de segurança', async () => 
 });
 
 test('asset com hash recebe cache longo', async () => {
-  const r = await handler(get('/assets/index-abc123.js'), {}, lerFalso);
+  const r = await tratar(get('/assets/index-abc123.js'), lerFalso);
   assert.equal(r.statusCode, 200);
   assert.match(r.headers['Cache-Control'], /immutable/);
   assert.equal(r.headers['Content-Type'], 'text/javascript; charset=utf-8');
 });
 
 test('binário vai em base64', async () => {
-  const r = await handler(get('/favicon.png'), {}, lerFalso);
+  const r = await tratar(get('/favicon.png'), lerFalso);
   assert.equal(r.isBase64Encoded, true);
   assert.deepEqual(Buffer.from(r.body, 'base64'), ARQUIVOS['favicon.png']);
 });
 
 test('asset inexistente → 404; SPA não publicada → 404 com instrução', async () => {
-  assert.equal((await handler(get('/assets/nao-existe.js'), {}, lerFalso)).statusCode, 404);
-  const vazio = await handler(get('/'), {}, async () => null);
+  assert.equal((await tratar(get('/assets/nao-existe.js'), lerFalso)).statusCode, 404);
+  const vazio = await tratar(get('/'), async () => null);
   assert.equal(vazio.statusCode, 404);
   assert.match(vazio.body, /deploy-web/);
 });
 
 test('% malformado → 404; método diferente de GET → 405', async () => {
-  assert.equal((await handler(get('/%E0%A4%A'), {}, lerFalso)).statusCode, 404);
+  assert.equal((await tratar(get('/%E0%A4%A'), lerFalso)).statusCode, 404);
   const post = { rawPath: '/', requestContext: { http: { method: 'POST' } } };
-  assert.equal((await handler(post, {}, lerFalso)).statusCode, 405);
+  assert.equal((await tratar(post, lerFalso)).statusCode, 405);
 });
 
 test('falha do S3 → 500 sem detalhe', async () => {
   const original = console.error;
   console.error = () => {};
   try {
-    const r = await handler(get('/'), {}, async () => { throw Object.assign(new Error('x'), { name: 'AccessDenied' }); });
+    const r = await tratar(get('/'), async () => { throw Object.assign(new Error('x'), { name: 'AccessDenied' }); });
     assert.equal(r.statusCode, 500);
     assert.doesNotMatch(r.body, /AccessDenied/);
   } finally {
     console.error = original;
   }
+});
+
+test('handler exportado aceita só (evento, contexto): o terceiro argumento do runtime é o callback', () => {
+  assert.ok(handler.length <= 2);
 });

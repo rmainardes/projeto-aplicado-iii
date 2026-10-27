@@ -1,6 +1,6 @@
 # CLAUDE.md — Projeto Aplicado III (certificados de calibração, Schulz S.A.)
 
-Projeto acadêmico individual (Rodrigo). MVP que lê a planilha de medições, calcula média, erro
+Projeto acadêmico em grupo (Grupo 39: Rodrigo e Nicolas). MVP que lê a planilha de medições, calcula média, erro
 sistemático, status por ponto e parecer, e emite o certificado em PDF. Contexto de medical device /
 ISO/IEC 17025: validação de entrada, tratamento de exceções e LGPD vêm antes de conveniência.
 
