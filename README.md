@@ -3,7 +3,7 @@
 **Automação da emissão de certificados de calibração — Schulz S.A.**
 UniSENAI/SC · 2026.2 · Prof. MSc. Hugo Menezes Barra
 
-Grupo 39: Adrian David Castillo Marcano · Nícolas Kretzschmar Lange · Rodrigo Mainardes Ribeiro
+Grupo 39: Nícolas Kretzschmar Lange · Rodrigo Mainardes Ribeiro
 
 ## AV04 — Plataforma Web de Gestão na AWS
 
