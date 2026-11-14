@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verificação de certificado — Schulz S.A.</title>
+  <link rel="stylesheet" href="/estatico/estilo.css">
+  <script src="/estatico/verificar.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Verificação de certificado</h1>
+    <p class="secundario">Página pública aberta pelo QR Code impresso no certificado de calibração.</p>
+
+    <p id="mensagem" class="mensagem" aria-live="polite">Consultando…</p>
+
+    <section id="secao-certificado" class="parecer" hidden>
+      <h2>Certificado registrado</h2>
+      <p class="parecer-valor">
+        <span id="parecer-enum" class="enum"></span>
+        <span id="parecer-rotulo" class="rotulo"></span>
+      </p>
+      <dl class="dados">
+        <dt>Identificador</dt><dd id="dado-id"></dd>
+        <dt>Emitido em</dt><dd id="dado-emissao"></dd>
+        <dt>SHA-256 do PDF</dt><dd id="dado-hash" class="hash"></dd>
+      </dl>
+    </section>
+
+    <form id="form-conferir" class="cartao" hidden>
+      <label for="arquivo">Conferir o arquivo que você recebeu (PDF)</label>
+      <div class="linha-envio">
+        <input type="file" id="arquivo" accept="application/pdf,.pdf" required>
+        <button type="submit" id="botao-conferir">Conferir</button>
+      </div>
+      <p class="dica">O SHA-256 do arquivo é comparado com o registrado na emissão. Qualquer alteração no PDF,
+        mesmo de um caractere, muda o hash.</p>
+    </form>
+    <p id="resultado-conferencia" class="mensagem" aria-live="polite"></p>
+  </main>
+</body>
+</html>

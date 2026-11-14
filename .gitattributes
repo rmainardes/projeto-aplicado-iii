@@ -1,3 +1,5 @@
 # Scripts Bash precisam de LF mesmo em checkout no Windows
 *.sh text eol=lf
 mvnw text eol=lf
+# Script em lote do Windows precisa de CRLF
+*.bat text eol=crlf

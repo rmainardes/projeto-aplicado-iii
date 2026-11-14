@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Certificados de calibração — Schulz S.A. (versão local)</title>
+  <link rel="stylesheet" href="/estatico/estilo.css">
+  <script src="/estatico/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <div class="topo">
+      <h1>Certificados de calibração</h1>
+      <span class="selo">Schulz S.A. · versão local (Python) · PoC acadêmica</span>
+    </div>
+    <p class="secundario">Envie a planilha de medições (.xlsx). O sistema valida o arquivo, calcula média,
+      erro sistemático e parecer, e emite o certificado em PDF com QR Code de verificação.</p>
+
+    <nav class="abas" role="tablist" aria-label="Seções">
+      <button type="button" role="tab" id="aba-processar" aria-controls="painel-processar" aria-selected="true">Processar planilha</button>
+      <button type="button" role="tab" id="aba-historico" aria-controls="painel-historico" aria-selected="false">Histórico</button>
+      <button type="button" role="tab" id="aba-exemplos" aria-controls="painel-exemplos" aria-selected="false">Planilhas de exemplo</button>
+    </nav>
+
+    <!-- Processar -->
+    <section id="painel-processar" role="tabpanel" aria-labelledby="aba-processar">
+      <form id="form-planilha" class="cartao">
+        <label for="arquivo">Planilha de ensaio (.xlsx, até 5 MB)</label>
+        <div class="linha-envio">
+          <!-- O accept só filtra a janela de escolha; quem valida o arquivo é o servidor. -->
+          <input type="file" id="arquivo" name="arquivo" accept=".xlsx" required>
+          <button type="submit" id="botao-enviar">Processar</button>
+        </div>
+      </form>
+
+      <p id="mensagem" class="mensagem" aria-live="polite"></p>
+
+      <section id="secao-parecer" class="parecer" aria-labelledby="titulo-parecer" hidden>
+        <h2 id="titulo-parecer">Parecer final</h2>
+        <p class="parecer-valor">
+          <span id="parecer-enum" class="enum"></span>
+          <span id="parecer-rotulo" class="rotulo"></span>
+        </p>
+        <div class="acoes">
+          <a id="link-certificado" class="botao" href="#">Baixar certificado (PDF)</a>
+          <a id="link-verificacao" class="secundario-link" href="#" target="_blank" rel="noopener">Abrir página de verificação (QR Code)</a>
+        </div>
+        <p id="ganho" class="ganho"></p>
+      </section>
+
+      <section id="secao-tabela" class="cartao" hidden>
+        <div class="rolagem">
+          <table id="tabela-pontos">
+            <caption>Resultado por ponto de ensaio</caption>
+            <thead>
+              <tr>
+                <th scope="col">Ponto</th>
+                <th scope="col">Característica</th>
+                <th scope="col">Leituras</th>
+                <th scope="col" class="num">Média</th>
+                <th scope="col" class="num">Referência</th>
+                <th scope="col" class="num">Erro sistemático</th>
+                <th scope="col" class="num">LEA</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="secao-erros" class="cartao erros" aria-labelledby="titulo-erros" hidden>
+        <h2 id="titulo-erros">Erros encontrados na planilha</h2>
+        <div class="rolagem">
+          <table id="tabela-erros">
+            <caption>Corrija cada item e envie a planilha de novo</caption>
+            <thead>
+              <tr>
+                <th scope="col">Linha</th>
+                <th scope="col">Coluna</th>
+                <th scope="col">Regra</th>
+                <th scope="col">Mensagem</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- Histórico -->
+    <section id="painel-historico" role="tabpanel" aria-labelledby="aba-historico" hidden>
+      <div id="indicadores" class="indicadores" aria-live="polite"></div>
+      <section class="cartao">
+        <div class="rolagem">
+          <table id="tabela-historico">
+            <caption>20 envios mais recentes</caption>
+            <thead>
+              <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Parecer</th>
+                <th scope="col">SHA-256 da planilha</th>
+                <th scope="col" class="num">Tempo</th>
+                <th scope="col">Certificado</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- Exemplos -->
+    <section id="painel-exemplos" role="tabpanel" aria-labelledby="aba-exemplos" hidden>
+      <section class="cartao">
+        <h2>Planilhas sintéticas para teste</h2>
+        <p class="dica">Arquivos fictícios do repositório (pasta <code>nucleo/src/test/resources/planilhas/</code>).
+          As <strong>ok-*</strong> passam no contrato e geram certificado; as <strong>inv-*</strong> violam uma
+          regra cada (R02–R15) e mostram a rejeição. Baixe uma e envie na aba <em>Processar planilha</em>.</p>
+        <ul id="lista-exemplos" class="lista-exemplos"></ul>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

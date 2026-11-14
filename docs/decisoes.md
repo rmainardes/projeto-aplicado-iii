@@ -324,3 +324,52 @@ cada página carrega três requisições pela API (HTML, JS e CSS), sem cache de
 desprezível. Descartados: S3 *website* público (sem HTTPS), Amplify Hosting (cota de 12 meses, programa
 antigo) e Lambda Function URL (funcionaria, mas seria uma segunda origem, com CORS e outro domínio no QR).
 Em produção, com conta sem a SCP, o CloudFront da D-016 volta a ser a opção natural.
+
+## D-028 — Versão local em Python para o executável da AV05
+**Data:** 14/11/2026 · **Origem:** roteiro da AV05 · **Status:** Vigente (complementa a D-011)
+
+O roteiro da AV05 exige um `iniciar_aplicacao_schulz.bat` que verifique Python 3.10+, crie um `venv`,
+instale o `requirements.txt` e rode um `app.py` com a API e a interface. O MVP é Java (D-011) e os
+avaliadores não têm, por premissa, JDK nem conta AWS. A entrega ganha uma **versão local em Python**, porta
+fiel do núcleo Java: mesmo contrato R01–R15 e mesmas mensagens, mesmo cálculo em decimal exato (média com 10
+casas `HALF_EVEN`, comparação com o LEA sem arredondar), mesmo layout de certificado com QR Code, mesma
+idempotência por SHA-256 (RN-20). A versão de produção continua sendo a da AWS (AV04).
+
+Garantias de equivalência: os testes da porta (`schulz/testes`) usam as 21 planilhas sintéticas e o oráculo
+independente da AV03; `ferramentas/equivalencia_java_python.py` compara, planilha a planilha, o resultado
+Python com as respostas gravadas da API Java (`docs/av03/evidencias/respostas/`): 21 de 21 equivalentes,
+inclusive o texto de cada mensagem de erro. Mudança de regra passa a valer para as duas implementações.
+
+Escolhas: Flask (API e páginas), `openpyxl` (leitura do `.xlsx`, em modo somente leitura; com o `defusedxml`
+instalado ele recusa XML malicioso), `fpdf2` (PDF) e `segno` (matriz do QR, desenhada como retângulos, sem
+imagem); persistência em SQLite da biblioteca padrão, em `dados/` (fora do Git). Faixas de versão com teto
+no `requirements.txt` (`fpdf2<2.9`, porque a 2.9 exige Python 3.11); rodas para Windows conferidas no PyPI
+de Python 3.10 a 3.14 em 14/11/2026. Autoria no PDF: na versão local, o usuário logado no sistema
+operacional (ou `SCHULZ_OPERADOR`); na nuvem, o Cognito (D-025). A rede local só é aberta com `--lan`, para
+o celular abrir o QR Code; o padrão escuta em `127.0.0.1`.
+
+Higienização acrescentada (pedida pelo roteiro): texto da característica e dos cabeçalhos em Unicode NFC,
+sem caracteres de controle e invisíveis (zero-width, BOM), com espaços especiais (NBSP) normalizados e
+espaços repetidos colapsados; célula só com espaços ou invisíveis é nula (R10). Números não são
+"consertados": texto que parece número continua R11. Divergência conhecida em relação ao Java: o Java só
+apara as bordas, então dois nomes que diferem apenas por espaço invisível passam como distintos lá e caem
+na R12 aqui; data formatada no Excel é R11 aqui e número serial lá. Levar a mesma higienização ao núcleo
+Java fica no roadmap.
+
+Alternativas descartadas: (1) `app.py` como lançador do JAR Spring Boot, que exigiria JDK na máquina do
+avaliador e trocaria uma dependência por outra; (2) manter só Java e adaptar o `.bat` para `mvnw`, que
+descumpre o roteiro item a item.
+
+## D-029 — Premissas e duas visões de investimento no ROI
+**Data:** 14/11/2026 · **Origem:** autor · **Status:** Vigente
+
+As premissas operacionais são as da AV01 (§1.2.5), refinadas etapa a etapa: 137 certificados/ano,
+R$ 75,00/h de metrologista, 10% de reemissões; o tempo manual é a soma das etapas P-06 a P-18 (53 min; a
+AV01 arredondou para ~50) e o automatizado, 17 min, porque a revisão do signatário, o lançamento no
+LightLab e as etapas fora do MVP continuam humanas. As contas estão em `ferramentas/roi.py`, e o relatório
+cita a saída dele. O investimento aparece em duas visões, ambas declaradas: **econômica** (o que custaria
+contratar o desenvolvimento, 180 h × R$ 60,00, mais validação e implantação = R$ 12.750,00) e **desembolso
+efetivo** da Schulz (só validação e implantação = R$ 1.950,00, porque a PoC foi construída na parceria
+acadêmica). Infraestrutura a R$ 0,00 (premissa do roteiro, conferida no Cost Explorer na CT-415). Ganhos de
+lead time (13 dias) e de risco em auditoria não entram na conta: são citados no parecer, sem valor
+inventado. Substituir as premissas por dados reais da Schulz é o primeiro passo recomendado.

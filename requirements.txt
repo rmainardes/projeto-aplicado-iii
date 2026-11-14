@@ -1,0 +1,6 @@
+# Versão local (Python) do MVP — AV05. Instalado pelo iniciar_aplicacao_schulz.bat num venv próprio.
+# Faixas com teto: o mesmo comportamento de Python 3.10 a 3.14 (D-028). Versões conferidas no PyPI em 14/11/2026.
+Flask>=3.1.3,<4          # API HTTP e interface
+openpyxl>=3.1.5,<3.2     # leitura do .xlsx (usa o defusedxml contra XML malicioso)
+fpdf2>=2.8.9,<2.9        # certificado em PDF; a 2.9 exige Python 3.11
+segno>=1.6.6,<2          # QR Code (matriz desenhada no PDF, sem imagem)

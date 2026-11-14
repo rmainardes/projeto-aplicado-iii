@@ -1,8 +1,9 @@
-// Gera o Relatório Técnico Integrado da AV04 (T17): docs/av04/AV4_fonte.md → HTML → PDF.
+// Gera o relatório de uma entrega: docs/avNN/AVN_fonte.md → HTML → PDF.
 //
 // Uso (na raiz do repositório):
-//   cd ferramentas/relatorio && npm ci && node gerar-relatorio.mjs
-// Saída: docs/av04/AV4_Projeto_Aplicado_III.pdf (e o .html intermediário, fora do Git).
+//   cd ferramentas/relatorio && npm ci && node gerar-relatorio.mjs        # AV04 (padrão)
+//   cd ferramentas/relatorio && npm ci && node gerar-relatorio.mjs av05   # AV05
+// Saída: docs/avNN/AVN_Projeto_Aplicado_III.pdf (e o .html intermediário, fora do Git).
 //
 // O PDF é impresso pelo Chrome ou Edge em modo headless (sem pandoc nem LibreOffice). Para usar outro
 // navegador: NAVEGADOR="/caminho/do/chrome" node gerar-relatorio.mjs
@@ -14,10 +15,16 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { marked } from 'marked';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-const PASTA = path.join(RAIZ, 'docs/av04');
-const FONTE = path.join(PASTA, 'AV4_fonte.md');
-const HTML = path.join(PASTA, 'AV4_Projeto_Aplicado_III.html');
-const PDF = path.join(PASTA, 'AV4_Projeto_Aplicado_III.pdf');
+const ENTREGA = (process.argv[2] || 'av04').toLowerCase();
+if (!/^av0\d$/.test(ENTREGA)) {
+  console.error(`Entrega inválida: ${ENTREGA} (use av04, av05...)`);
+  process.exit(1);
+}
+const N = ENTREGA.slice(-1);
+const PASTA = path.join(RAIZ, 'docs', ENTREGA);
+const FONTE = path.join(PASTA, `AV${N}_fonte.md`);
+const HTML = path.join(PASTA, `AV${N}_Projeto_Aplicado_III.html`);
+const PDF = path.join(PASTA, `AV${N}_Projeto_Aplicado_III.pdf`);
 
 function incluir(texto) {
   return texto.replace(/<!--\s*incluir:\s*([\w./-]+)\s*-->/g, (_, arquivo) => {
@@ -58,7 +65,7 @@ const markdown = semComentarios(incluir(readFileSync(FONTE, 'utf8')));
 const corpo = marked.parse(markdown, { gfm: true });
 const documento = `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8">
-<title>AV04 — Projeto Aplicado III — Grupo 39</title>
+<title>AV0${N} — Projeto Aplicado III — Grupo 39</title>
 <style>${CSS}</style></head>
 <body>${corpo}</body></html>`;
 writeFileSync(HTML, documento);

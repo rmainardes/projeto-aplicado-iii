@@ -5,6 +5,31 @@ UniSENAI/SC · 2026.2 · Prof. MSc. Hugo Menezes Barra
 
 Grupo 39: Nícolas Kretzschmar Lange · Rodrigo Mainardes Ribeiro
 
+## AV05 — Executável local, documentação técnica e ROI
+
+**Para rodar no Windows:** instale o [Python 3.10+](https://www.python.org/downloads/) marcando
+"Add python.exe to PATH", baixe este repositório e dê dois cliques em **`iniciar_aplicacao_schulz.bat`**.
+O script verifica o Python, cria o `.venv`, instala o `requirements.txt`, sobe a API (`app.py`) e abre
+<http://127.0.0.1:5000/> no navegador. Planilhas de teste: aba _Planilhas de exemplo_ da interface. Linux e
+macOS: `./iniciar_aplicacao_schulz.sh`. Celular no mesmo Wi-Fi (QR Code): `iniciar_aplicacao_schulz.bat --lan`.
+
+A versão local (`schulz/`, Python + Flask) é uma porta fiel do núcleo Java ([D-028](docs/decisoes.md)): mesmo
+contrato R01–R15, mesmo cálculo em decimal exato, mesmo certificado com QR Code e idempotência por SHA-256.
+Equivalência com a API Java: 21 de 21 planilhas ([`docs/av05/equivalencia.md`](docs/av05/equivalencia.md)).
+
+| Documento                                                      | Arquivo                                                                                                                              |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Relatório consolidado (PDF): documentação do MVP, manual e ROI | [`docs/av05/AV5_Projeto_Aplicado_III.pdf`](docs/av05/AV5_Projeto_Aplicado_III.pdf) (fonte: [`AV5_fonte.md`](docs/av05/AV5_fonte.md)) |
+| Estudo de ROI (gerado por `ferramentas/roi.py`)                | [`docs/av05/roi.md`](docs/av05/roi.md)                                                                                               |
+| Execução do `.bat`                                             | [`docs/av05/evidencias/execucao-bat.txt`](docs/av05/evidencias/execucao-bat.txt)                                                     |
+
+```bash
+.venv\Scripts\python -m unittest discover -s schulz/testes -t .   # 33 testes (Linux: .venv/bin/python)
+python ferramentas/equivalencia_java_python.py                    # Java × Python, 21 planilhas
+python ferramentas/roi.py > docs/av05/roi.md                      # tabelas do ROI
+cd ferramentas/relatorio && npm ci && node gerar-relatorio.mjs av05   # PDF do relatório
+```
+
 ## AV04 — Plataforma Web de Gestão na AWS
 
 A AV04 integra o diagnóstico (AV01), a arquitetura serverless (AV02) e o motor de cálculo (AV03) numa
@@ -23,13 +48,13 @@ Tudo em `us-east-2` (D-022): 5 funções Lambda, 3 buckets S3 privados, DynamoDB
 HTTP API e uma fila SQS de falhas. A interface é servida pelo próprio HTTP API, pela `fn-web`
 ([D-027](docs/decisoes.md)), sem CloudFront. Documentos da entrega:
 
-| Documento | Arquivo |
-| --- | --- |
-| Relatório Técnico Integrado (PDF) | [`docs/av04/AV4_Projeto_Aplicado_III.pdf`](docs/av04/AV4_Projeto_Aplicado_III.pdf) (fonte: [`AV4_fonte.md`](docs/av04/AV4_fonte.md)) |
-| Matriz de Rastreabilidade de Requisitos | [`docs/av04/matriz-rastreabilidade.md`](docs/av04/matriz-rastreabilidade.md) |
-| Casos de teste e evidências | [`docs/av04/evidencias.md`](docs/av04/evidencias.md) |
-| Roteiro do vídeo | [`docs/av04/roteiro-video.md`](docs/av04/roteiro-video.md) |
-| Decisões D-001 a D-027 | [`docs/decisoes.md`](docs/decisoes.md) |
+| Documento                               | Arquivo                                                                                                                              |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Relatório Técnico Integrado (PDF)       | [`docs/av04/AV4_Projeto_Aplicado_III.pdf`](docs/av04/AV4_Projeto_Aplicado_III.pdf) (fonte: [`AV4_fonte.md`](docs/av04/AV4_fonte.md)) |
+| Matriz de Rastreabilidade de Requisitos | [`docs/av04/matriz-rastreabilidade.md`](docs/av04/matriz-rastreabilidade.md)                                                         |
+| Casos de teste e evidências             | [`docs/av04/evidencias.md`](docs/av04/evidencias.md)                                                                                 |
+| Roteiro do vídeo                        | [`docs/av04/roteiro-video.md`](docs/av04/roteiro-video.md)                                                                           |
+| Decisões D-001 a D-027                  | [`docs/decisoes.md`](docs/decisoes.md)                                                                                               |
 
 ### Deploy do zero
 
@@ -128,8 +153,8 @@ Resposta (trecho):
       "caracteristica": "Diâmetro eixo",
       "leituras": [4.13, 4.14],
       "valorReferencia": 4.12,
-      "media": 4.13500,
-      "erroSistematico": 0.01500,
+      "media": 4.135,
+      "erroSistematico": 0.015,
       "lea": 0.03,
       "status": "DENTRO_DA_TOLERANCIA"
     }
@@ -137,13 +162,13 @@ Resposta (trecho):
 }
 ```
 
-| Código | Quando |
-| ------ | ------ |
-| 200 | Planilha processada, com parecer `APROVADO` ou `REPROVADO` (reprovação é resultado, não erro) |
-| 400 | Planilha fora do contrato (lista `erros` com linha, coluna, regra e mensagem) ou requisição sem a parte `arquivo` |
-| 413 | Arquivo acima de 5 MB |
-| 415 | Requisição que não é `multipart/form-data` |
-| 500 | Erro inesperado: a resposta traz só um `id`, que liga ao registro no log |
+| Código | Quando                                                                                                            |
+| ------ | ----------------------------------------------------------------------------------------------------------------- |
+| 200    | Planilha processada, com parecer `APROVADO` ou `REPROVADO` (reprovação é resultado, não erro)                     |
+| 400    | Planilha fora do contrato (lista `erros` com linha, coluna, regra e mensagem) ou requisição sem a parte `arquivo` |
+| 413    | Arquivo acima de 5 MB                                                                                             |
+| 415    | Requisição que não é `multipart/form-data`                                                                        |
+| 500    | Erro inesperado: a resposta traz só um `id`, que liga ao registro no log                                          |
 
 Os erros seguem o formato `application/problem+json` (RFC 9457). Exemplos de todas as
 respostas estão em `docs/av03/evidencias/respostas/`.
@@ -177,11 +202,14 @@ app-local/     tela e API da AV03 sobre o núcleo (Spring Boot)
   src/main/resources/static/   interface (HTML, CSS e JavaScript, sem bibliotecas)
 funcoes/       funções Lambda em Java: fn-ingestao, fn-certificado (PDF + QR), fn-api; JAR sombreado
 web/           Plataforma Web (React + Vite): login, processamento, histórico, verificação pública
+schulz/        versão local em Python (AV05): ingestão, cálculo, PDF + QR, SQLite, API Flask e interface
+app.py, requirements.txt, iniciar_aplicacao_schulz.bat/.sh   executável local (AV05)
 infra/         template SAM, fn-web (Node.js, serve a SPA) e scripts de deploy e de teste na nuvem
 docs/decisoes.md             registro de decisões do projeto
 docs/av02/                   relatório da AV02 (arquitetura em nuvem)
 docs/av03/                   guia, contrato da planilha, oráculo e evidências de teste
 docs/av04/                   relatório, matriz, evidências, roteiro do vídeo, guia e modelo de dados
+docs/av05/                   relatório consolidado, ROI, equivalência Java × Python e evidências
 diagramas/                   diagramas de arquitetura (.drawio, .png, .svg)
 ferramentas/                 gerador das planilhas sintéticas e do PDF do relatório (relatorio/)
 ```
@@ -206,11 +234,11 @@ recentes do usuário. Detalhes na §11 do relatório.
 
 ## Entregas
 
-| #    | Tema                                                    | Data       | Status       |
-| ---- | ------------------------------------------------------- | ---------- | ------------ |
-| AV01 | Identificação do problema e levantamento de requisitos | 15/09/2026 | Entregue     |
-| AV02 | Arquitetura em nuvem                                    | 02/10/2026 | Entregue     |
-| AV03 | MVP parte 1 — aplicação transacional                    | 15/10/2026 | Entregue     |
-| AV04 | MVP parte 2 — web/mobile e validação                    | 29/10/2026 | Código pronto; faltam deploy e vídeo |
-| AV05 | Documentação técnica do MVP e ROI                       | 19/11/2026 | —            |
-| AV06 | Pitch técnico-comercial                                 | 03/12/2026 | —            |
+| #    | Tema                                                   | Data       | Status            |
+| ---- | ------------------------------------------------------ | ---------- | ----------------- |
+| AV01 | Identificação do problema e levantamento de requisitos | 15/09/2026 | Entregue          |
+| AV02 | Arquitetura em nuvem                                   | 02/10/2026 | Entregue          |
+| AV03 | MVP parte 1 — aplicação transacional                   | 15/10/2026 | Entregue          |
+| AV04 | MVP parte 2 — web/mobile e validação                   | 29/10/2026 | Entregue          |
+| AV05 | Documentação técnica do MVP, ROI e executável `.bat`   | 19/11/2026 | Pronta para envio |
+| AV06 | Pitch técnico-comercial                                | 03/12/2026 | —                 |

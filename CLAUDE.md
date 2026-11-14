@@ -6,10 +6,12 @@ ISO/IEC 17025: validação de entrada, tratamento de exceções e LGPD vêm ante
 
 ## Entrega em andamento
 
-**AV04 — Plataforma Web e deploy na AWS (prazo qui 29/10/2026).** Guia mestre:
-`docs/av04/guia-av04.md`. Cada sessão executa **uma** tarefa (`Txx`) do guia. Leia a seção da tarefa
-e só os arquivos listados em **Contexto**; não leia o guia da AV03 inteiro nem os relatórios em
-DOCX/PDF sem necessidade.
+**AV05 — Documentação técnica, ROI e executável `.bat` (prazo qui 19/11/2026).** Relatório em
+`docs/av05/AV5_fonte.md` (PDF: `node ferramentas/relatorio/gerar-relatorio.mjs av05`). O executável roda a
+**versão local em Python** (`schulz/`, `app.py`, D-028), porta do núcleo Java: regra nova ou alterada vale para
+as duas implementações, e `ferramentas/equivalencia_java_python.py` tem de continuar 21/21. Números do ROI só
+saem de `ferramentas/roi.py` (D-029). Python: 3.10+ compatível; testes com `python -m unittest discover -s
+schulz/testes -t .`.
 
 ## Como trabalhar
 

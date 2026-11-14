@@ -29,6 +29,9 @@ __pycache__/
 .venv/
 venv/
 
+# Versão local (AV05): banco SQLite, PDFs emitidos e log ficam na máquina
+dados/
+
 # IDE
 .idea/
 .vscode/
@@ -56,3 +59,4 @@ docs/av01/
 
 # Relatório: HTML intermediário (o PDF entra no Git)
 docs/av04/AV4_Projeto_Aplicado_III.html
+docs/av05/AV5_Projeto_Aplicado_III.html

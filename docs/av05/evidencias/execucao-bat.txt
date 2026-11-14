@@ -1,0 +1,35 @@
+Execução do iniciar_aplicacao_schulz.bat em 14/11/2026: cmd.exe do Wine 9.0 com CPython 3.10.20 para Windows
+(x86_64, build python-build-standalone), pasta "C:\Projeto aplicado III\repo" (caminho com espaços).
+Três execuções: sem Python no PATH; com Python, instalando as bibliotecas (o .venv já tinha sido criado
+numa tentativa anterior, que revelou e corrigiu a checagem do requirements.txt); e a execução normal, com
+a API numa janela própria e o navegador aberto. A janela do console exigiu um servidor X virtual (Xvfb).
+
+--- 1ª execução (sem Python no PATH) ---
+[1/4] Verificando o Python 3.10 ou superior no PATH...
+
+ [ERRO] Python 3.10 ou superior nao encontrado no PATH.
+        Instale pelo site https://www.python.org/downloads/ e marque a opcao
+        "Add python.exe to PATH" no instalador. Depois rode este arquivo de novo.
+
+--- 2ª execução (instalação) ---
+[1/4] Verificando o Python 3.10 ou superior no PATH...
+       OK: Python 3.10.20 (comando: python)
+[2/4] Preparando o ambiente virtual (.venv)...
+       Ambiente virtual ja existe.
+[3/4] Instalando as bibliotecas do requirements.txt...
+       Bibliotecas instaladas.
+
+--- 3ª execução ---
+[1/4] Verificando o Python 3.10 ou superior no PATH...
+       OK: Python 3.10.20 (comando: python)
+[2/4] Preparando o ambiente virtual (.venv)...
+       Ambiente virtual ja existe.
+[3/4] Instalando as bibliotecas do requirements.txt...
+       Bibliotecas ja instaladas e atualizadas.
+[4/4] Iniciando a API e abrindo a interface...
+
+ Pronto: interface aberta em http://127.0.0.1:5000/
+ - Planilhas de teste: aba "Planilhas de exemplo" (ou nucleo\src\test\resources\planilhas)
+ - Certificados e banco local: pasta dados\
+ - Para encerrar, feche a janela "Schulz - API".
+
